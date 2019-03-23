@@ -2,7 +2,18 @@ import pika
 import sys
 import time
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+def fetch_ip():
+    return((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close())\
+      for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0])
+
+
+ip = fetch_ip()
+username = "Honaker"
+password = "buse"
+
+credentials = pika.PlainCredentials(username, password)
+
+connection = pika.BlockingConnection(pika.ConnectionParameters(node, 5672, '/', credentials)
 channel = connection.channel()
 
 channel.exchange_declare(exchange='Squires', exchange_type='direct')
@@ -41,5 +52,13 @@ def callback(ch, method, properties, body):
     #all of the code to display on screen
 
 channel.basic_consume(callback, queue=Food, no_ack=True)
+channel.basic_consume(callback, queue=Meetings, no_ack=True)
+channel.basic_consume(callback, queue=Rooms, no_ack=True)
+channel.basic_consume(callback, queue=Auditorium, no_ack=True)
+channel.basic_consume(callback, queue=Noise, no_ack=True)
+channel.basic_consume(callback, queue=Seating, no_ack=True)
+channel.basic_consume(callback, queue=Wishes, no_ack=True)
+
+
 
 channel.start_consuming()
