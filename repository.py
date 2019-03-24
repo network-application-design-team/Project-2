@@ -1,6 +1,7 @@
 import pika
 import sys
 import time
+import socket
 
 def fetch_ip():
     return((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close())\
@@ -13,7 +14,7 @@ password = "buse"
 
 credentials = pika.PlainCredentials(username, password)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(node, 5672, '/', credentials)
+connection = pika.BlockingConnection(pika.ConnectionParameters(ip, 5672, '/', credentials))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='Squires', exchange_type='direct')
