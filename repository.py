@@ -21,7 +21,7 @@ channel = connection.channel()
 channel.exchange_declare(exchange='Squires', exchange_type='direct')
 channel.exchange_declare(exchange='Goodwin', exchange_type='direct')
 channel.exchange_declare(exchange='Library', exchange_type='direct')
-
+channel.exchange_declare(exchange='Commands', exchange_type='direct')
 
 
 #result = channel.queue_declare(exclusive=True)
@@ -58,6 +58,8 @@ channel.queue_bind(exchange='Library', queue='Noise', routing_key='Noise')
 channel.queue_bind(exchange='Library', queue='Seating', routing_key='Seating')
 channel.queue_bind(exchange='Library', queue='Wishes', routing_key='Wishes')
 
+
+
 checkpoint = 1
 
 def callback(ch, method, properties, body):
@@ -70,8 +72,8 @@ def callback(ch, method, properties, body):
 def respond_back(ch, method, props, body):
     response = "GPIO message"
 
-    ch.basic_publish(exchange='',
-                     properties=pika.BasicProperties(correlation_id = props.correlation_id),
+    ch.basic_publish(exchange='Commands',
+		     routing_key='SendtoCapt',
                      body=str(response))
 
 
