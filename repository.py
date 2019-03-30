@@ -21,7 +21,7 @@ channel = connection.channel()
 channel.exchange_declare(exchange='Squires', exchange_type='direct')
 channel.exchange_declare(exchange='Goodwin', exchange_type='direct')
 channel.exchange_declare(exchange='Library', exchange_type='direct')
-
+channel.exchange_declare(exchange='Commands', exchange_type='direct')
 
 
 #result = channel.queue_declare(exclusive=True)
@@ -58,14 +58,23 @@ channel.queue_bind(exchange='Library', queue='Noise', routing_key='Noise')
 channel.queue_bind(exchange='Library', queue='Seating', routing_key='Seating')
 channel.queue_bind(exchange='Library', queue='Wishes', routing_key='Wishes')
 
+
+
 checkpoint = 1
 
 def callback(ch, method, properties, body):
+    checkpoint = 1
     print(" hot")
     #all of the code to display on screen
-    print("[" + str(datetime.datetime.now())  + "] [Checkpoint " + str(checkpoint).zfill(2) + "]
+    print("[" + str(datetime.datetime.now())  + "] [Checkpoint " + str(checkpoint).zfill(2) + "]")
     checkpoint += 1
 
+def respond_back(ch, method, props, body):
+    response = "GPIO message"
+
+    ch.basic_publish(exchange='Commands',
+		     routing_key='SendtoCapt',
+                     body=str(response))
 
 
 channel.basic_consume(callback, queue='Food', no_ack=True)
