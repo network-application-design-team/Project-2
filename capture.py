@@ -26,7 +26,7 @@ def fetch_ip():
         + ["no IP found"]
     )[0]
 
-if (sys.argv != 5):
+if (sys.argv != 4):
     print("Not enough arguments")
     
 
