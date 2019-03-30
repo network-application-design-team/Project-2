@@ -26,8 +26,15 @@ def fetch_ip():
         + ["no IP found"]
     )[0]
 
+if (sys.argv != 5):
+    print("Not enough arguments")
+    
 
-node = "172.30.126.1"
+
+
+
+
+node = sys.argv[2]
 username = "Honaker"
 password = "buse"
 
