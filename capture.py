@@ -26,12 +26,9 @@ def fetch_ip():
         + ["no IP found"]
     )[0]
 
-if (sys.argv != 4):
+
+if sys.argv != 4:
     print("Not enough arguments")
-    
-
-
-
 
 
 node = sys.argv[2]
@@ -51,20 +48,31 @@ channel.exchange_declare(exchange="Library", exchange_type="direct")
 
 message = "info:Hello World!"
 channel.basic_publish(exchange="Squires", routing_key="Food", body=message)
-channel.basic_publish(exchange='Goodwin', routing_key='Goodwin', body=message)
-channel.basic_publish(exchange='Library', routing_key='Library', body=message)
+channel.basic_publish(exchange="Goodwin", routing_key="Goodwin", body=message)
+channel.basic_publish(exchange="Library", routing_key="Library", body=message)
 
-#connection.close()
+# connection.close()
 
 # Mongodb
 mongoClient = pymongo.MongoClient()
+
 # Get the 'warehouses'
 squires = mongoClient.Squires
 library = mongoClient.Library
+goodwin = mongoClient.Goodwin
 
 # Get the 'collections'
+squiresFood = squires.Food
 squiresRooms = squires.Rooms
-libraryRooms = library.Rooms
+squiresMeetings = squires.Meetings
+
+libraryNoise = library.Noise
+librarySeating = library.Seating
+libraryWishes = library.Wishes
+
+goodwinClassrooms = goodwin.Classrooms
+goodwinAuditorium = goodwin.Auditorium
+
 
 # Test Data
 action = "p"
@@ -80,5 +88,32 @@ post = {
     "Message": message,
 }
 
-# Insert into Squires Rooms
-post_id = squiresRooms.insert_one(post).inserted_id
+post_ID
+documentInserted
+if place is "Squires":
+    if subject is "Rooms":
+        post_ID = squiresRooms.insert_one(post).inserted_id
+        documentInserted = squiresRooms.find_one({"_id": post_ID})
+    elif subject is "Food":
+        post_ID = squiresFood.insert_one(post).inserted_id
+        documentInserted = squiresFood.find_one({"_id": post_ID})
+    elif subject is "Meetings":
+        post_ID = squiresMeetings.insert_one(post).inserted_id
+        documentInserted = squiresMeetings.find_one({"_id": post_ID})
+elif place is "Library":
+    if subject is "Noise":
+        post_ID = libraryNoise.insert_one(post).inserted_id
+        documentInserted = libraryNoise.find_one({"_id": post_ID})
+    elif subject is "Seating":
+        post_ID = librarySeating.insert_one.inserted_id
+        documentInserted = librarySeating.find_one({"_id": post_ID})
+    elif subject is "Wishes":
+        post_ID = libraryWishes.insert_one(post).inserted_id
+        documentInserted = libraryWishes.find_one({"_id": post_ID})
+elif place is "Goodwin":
+    if subject is "Classrooms":
+        post_ID = goodwinClassrooms.insert_one(post).inserted_id
+        documentInserted = goodwinClassrooms.find_one({"_id": post_ID})
+    elif subject is "Auditorium":
+        post_ID = goodwinAuditorium.insert_one(post).inserted_id
+        documentInserted = goodwinAuditorium.find_one({"_id": post_ID})
