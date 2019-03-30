@@ -27,7 +27,7 @@ def fetch_ip():
     )[0]
 
 
-if sys.argv != 4:
+if (sys.argv != 3):
     print("Not enough arguments")
 
 
@@ -44,12 +44,17 @@ channel = connection.channel()
 channel.exchange_declare(exchange="Squires", exchange_type="direct")
 channel.exchange_declare(exchange="Goodwin", exchange_type="direct")
 channel.exchange_declare(exchange="Library", exchange_type="direct")
-
+channel.exchange_declare(exchange="Commands", exchange_type="direct") 
 
 message = "info:Hello World!"
 channel.basic_publish(exchange="Squires", routing_key="Food", body=message)
 channel.basic_publish(exchange="Goodwin", routing_key="Goodwin", body=message)
 channel.basic_publish(exchange="Library", routing_key="Library", body=message)
+
+
+channel.queue_declare(queue='SendtoCapt')
+channel.queue_bind(exchange='Commands', queue='SendtoCapt', routing_key='SendtoCapt')
+
 
 # connection.close()
 
@@ -88,8 +93,7 @@ post = {
     "Message": message,
 }
 
-post_ID
-documentInserted
+
 if place is "Squires":
     if subject is "Rooms":
         post_ID = squiresRooms.insert_one(post).inserted_id
