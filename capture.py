@@ -44,10 +44,10 @@ channel.exchange_declare(exchange="Library", exchange_type="direct")
 
 message = "info:Hello World!"
 channel.basic_publish(exchange="Squires", routing_key="Food", body=message)
-# channel.basic_publish(exchange='Goodwin', routing_key='Goodwin', body=message)
-# channel.basic_publish(exchange='Library', routing_key='Library', body=message)
+channel.basic_publish(exchange='Goodwin', routing_key='Goodwin', body=message)
+channel.basic_publish(exchange='Library', routing_key='Library', body=message)
 
-connection.close()
+#connection.close()
 
 # Mongodb
 mongoClient = pymongo.MongoClient()
