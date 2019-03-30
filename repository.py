@@ -2,6 +2,7 @@ import pika
 import sys
 import time
 import socket
+import datetime
 
 def fetch_ip():
     return((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close())\
@@ -57,10 +58,15 @@ channel.queue_bind(exchange='Library', queue='Noise', routing_key='Noise')
 channel.queue_bind(exchange='Library', queue='Seating', routing_key='Seating')
 channel.queue_bind(exchange='Library', queue='Wishes', routing_key='Wishes')
 
+checkpoint = 1
 
 def callback(ch, method, properties, body):
     print(" hot")
     #all of the code to display on screen
+    print("[" + str(datetime.datetime.now())  + "] [Checkpoint " + str(checkpoint).zfill(2) + "]
+    checkpoint += 1
+
+
 
 channel.basic_consume(callback, queue='Food', no_ack=True)
 channel.basic_consume(callback, queue='Meetings', no_ack=True)
