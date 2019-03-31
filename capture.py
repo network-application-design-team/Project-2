@@ -184,7 +184,7 @@ class listener(tweepy.StreamListener):
             message = re.findall(r'"([^"]*)"', tweeter)
             message = message[0]
             print("[ Checkpoint 01 " + str(datetime.datetime.now())  " ] Tweet captured: " + message)
-            channel.basic_publish(exchange=location, routing_key=command, body=message)
+            self.channel.basic_publish(exchange=location, routing_key=command, body=message)
 
         elif tweeter[0] == "c" or tweeter[1] == "c":
             action = "c"
@@ -206,7 +206,7 @@ class listener(tweepy.StreamListener):
             print('c command:')
             print(command)
             print("[ Checkpoint 01 " + str(datetime.datetime.now())  " ] Tweet captured: " + message)
-            message = channel.get.basic(command)
+            x,y,message = self.channel.get_basic(command)
 
         t1 = threading.Thread(
             target=mongoInsert,
