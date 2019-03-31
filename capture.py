@@ -148,6 +148,7 @@ class listener(tweepy.StreamListener):
             message = message[0]
             print("message:")
             print(message)
+            channel.basic_publish(exchange=location, routing_key=command, body=message)
 
         elif tweeter[0] == "c" or tweeter[1] == "c":
             if "#ECE4564T20" in tweeter:
@@ -164,6 +165,9 @@ class listener(tweepy.StreamListener):
             command = command.rstrip()
             command = command[1:]
             print(command)
+            message = channel.get.basic(command)
+            print(message)
+       
 
         return True
 
