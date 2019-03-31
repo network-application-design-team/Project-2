@@ -68,10 +68,7 @@ def whiteOff():
 
 
 def mongoInsert(
-    action,
-    place,
-    subject,
-    message,
+    post,
     squiresRooms,
     squiresFood,
     squiresMeetings,
@@ -81,97 +78,35 @@ def mongoInsert(
     goodwinAuditorium,
     goodwinClassrooms,
 ):
-    # Test Data
-    # action = "p"
-    # place = "Squires"
-    msgID = "20" + "$" + str(time.time())
-    # subject = "Rooms"
-    # message = "I like to be comfortable"
-    post = {
-        "Action": action,
-        "Place": place,
-        "MsgID": msgID,
-        "Subject": subject,
-        "Message": message,
-    }
-    
-    if str(place) == "Squires":
-        if str(subject) == "Rooms":
+
+    if post["Place"] == "Squires":
+        if post["Subject"] == "Rooms":
             post_ID = squiresRooms.insert_one(post).inserted_id
             documentInserted = squiresRooms.find_one({"_id": post_ID})
-            print("I got to squires rooms")
-            print(post_ID)
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
-        elif subject == "Food":
+            print("I executed correctly")
+        elif post["Subject"] == "Food":
             post_ID = squiresFood.insert_one(post).inserted_id
             documentInserted = squiresFood.find_one({"_id": post_ID})
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
-        elif subject == "Meetings":
+        elif post["Subject"] == "Meetings":
             post_ID = squiresMeetings.insert_one(post).inserted_id
             documentInserted = squiresMeetings.find_one({"_id": post_ID})
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
-    elif place == "Library":
-        if subject == "Noise":
+    elif post["Place"] == "Library":
+        if post["Subject"] == "Noise":
             post_ID = libraryNoise.insert_one(post).inserted_id
             documentInserted = libraryNoise.find_one({"_id": post_ID})
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
-        elif subject == "Seating":
+        elif post["Subject"] == "Seating":
             post_ID = librarySeating.insert_one.inserted_id
             documentInserted = librarySeating.find_one({"_id": post_ID})
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
-        elif subject == "Wishes":
+        elif post["Subject"] == "Wishes":
             post_ID = libraryWishes.insert_one(post).inserted_id
             documentInserted = libraryWishes.find_one({"_id": post_ID})
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
-    elif place == "Goodwin":
-        if subject == "Classrooms":
+    elif post["Place"] == "Goodwin":
+        if post["Subject"] == "Classrooms":
             post_ID = goodwinClassrooms.insert_one(post).inserted_id
             documentInserted = goodwinClassrooms.find_one({"_id": post_ID})
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
-        elif subject == "Auditorium":
+        elif post["Subject"] == "Auditorium":
             post_ID = goodwinAuditorium.insert_one(post).inserted_id
             documentInserted = goodwinAuditorium.find_one({"_id": post_ID})
-            print(
-                "[ Checkpoint 02 "
-                + str(datetime.datetime.now())
-                + " ] Store command in MongoDB instance: "
-                + str(documentInserted)
-            )
     return
 
 
@@ -268,13 +203,18 @@ class listener(tweepy.StreamListener):
             )
             x, y, message = self.channel.get_basic(command)
 
+        msgID = "20" + "$" + str(time.time())
+        post = {
+            "Action": action,
+            "Place": location,
+            "MsgID": msgID,
+            "Subject": command,
+            "Message": message,
+        }
         t1 = threading.Thread(
             target=mongoInsert,
             args=(
-                action,
-                location,
-                command,
-                message,
+                post,
                 self.squiresRooms,
                 self.squiresFood,
                 self.squiresMeetings,
@@ -286,7 +226,12 @@ class listener(tweepy.StreamListener):
             ),
         )
         t1.start()
-
+        print(
+            "[ Checkpoint 02 "
+            + str(datetime.datetime.now())
+            + " ] Store command in MongoDB instance: "
+            + str(post)
+        )
         print("[ Checkpoint 03 " + str(datetime.datetime.now()) + " ] GPIO LED")
         print(
             "[ Checkpoint 04"
