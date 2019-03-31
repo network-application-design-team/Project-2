@@ -193,15 +193,17 @@ class listener(tweepy.StreamListener):
                 command = substr.substringByChar(
                     tweeter, startChar="+", endChar=u"\u0020"
                 )
+                command = command[1:]
             else:
-                command = substr.substringByChar(tweeter, startChar="+")
-
+                command = tweeter.split('+', 1)
+                command = command[1]
 
             location = substr.substringByChar(tweeter, startChar=":", endChar="+")
             location = location[1:-1]
+            print('c location:')
             print(location)
             command = command.rstrip()
-            command = command[1:]
+            print('c command:')
             print(command)
             print("[ Checkpoint 01 " + str(datetime.datetime.now())  " ] Tweet captured: " + message)
             message = channel.get.basic(command)
