@@ -76,6 +76,7 @@ def mongoInsert(
 
 
 # Twitter Section
+<<<<<<< HEAD
 # Keys for twitter dev api
 ckey = captureKeys.ckey
 csecret = captureKeys.csecret
@@ -86,6 +87,8 @@ auth = tweepy.OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
 print("Connected to Twitter")
 
+=======
+>>>>>>> e7f0d786b961f0f8e1d36ba53072bc269e147fcc
 # Twitter class:
 class listener(tweepy.StreamListener):
     def on_data(self, data):
@@ -130,8 +133,11 @@ class listener(tweepy.StreamListener):
 
     def on_error(self, status):
         print(status)
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> e7f0d786b961f0f8e1d36ba53072bc269e147fcc
 #
 # Area of interest
 #
@@ -144,7 +150,7 @@ asecret = captureKeys.asecret
 # setting up authentication
 auth = tweepy.OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
-print("Connected to Twitter")
+print('Connected to Twitter')
 
 twitterStream = tweepy.Stream(auth, listener())
 twitterStream.filter(track=["#ECE4564T20"])
