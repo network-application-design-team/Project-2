@@ -124,16 +124,6 @@ def mongoInsert(
     return
 
 
-# Twitter Section
-# Keys for twitter dev api
-ckey = captureKeys.ckey
-csecret = captureKeys.csecret
-atoken = captureKeys.atoken
-asecret = captureKeys.asecret
-# setting up authentication
-auth = tweepy.OAuthHandler(ckey, csecret)
-auth.set_access_token(atoken, asecret)
-print("Connected to Twitter")
 
 # Twitter class:
 class listener(tweepy.StreamListener):
@@ -166,11 +156,11 @@ class listener(tweepy.StreamListener):
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(node, 5672, "/", credentials)
         )
-        channel = connection.channel()
+        self.channel = connection.channel()
 
-        channel.exchange_declare(exchange="Squires", exchange_type="direct")
-        channel.exchange_declare(exchange="Goodwin", exchange_type="direct")
-        channel.exchange_declare(exchange="Library", exchange_type="direct")
+        self.channel.exchange_declare(exchange="Squires", exchange_type="direct")
+        self.channel.exchange_declare(exchange="Goodwin", exchange_type="direct")
+        self.channel.exchange_declare(exchange="Library", exchange_type="direct")
 	
 
     def on_data(self, data):
@@ -194,7 +184,7 @@ class listener(tweepy.StreamListener):
             message = message[0]
             print("message:")
             print(message)
-            channel.basic_publish(exchange=location, routing_key=command, body=message)
+            self.channel.basic_publish(exchange=location, routing_key=command, body=message)
 
         elif tweeter[0] == "c" or tweeter[1] == "c":
             action = "c"
@@ -213,13 +203,13 @@ class listener(tweepy.StreamListener):
             command = command.rstrip()
             command = command[1:]
             print(command)
-            message = channel.get.basic(command)
+            trashx,trashy,message = self.channel.basic_get(command)
             print(message)
 
         t1 = threading.Thread(
             target=mongoInsert,
             args=(
-                ,
+                action ,
                 location,
                 command,
                 message,
