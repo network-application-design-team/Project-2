@@ -8,7 +8,7 @@ import threading
 import subprocess
 import datetime
 
-# imports for twitter
+# Imports for twitter
 import tweepy
 import json
 import re
@@ -16,6 +16,45 @@ import substring as substr
 import captureKeys
 import threading
 
+# Import and pin setup for GPIO
+# Make sure to use GPIO.cleanup()
+# Commands: redOn(), redOff(), time.sleep(2)
+import RPi.GPIO as GPIO
+redPin = 11
+greenPin = 13
+bluePin = 15
+
+def blink(pin):
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.HIGH)
+
+def turnOff(pin):
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.LOW)
+
+def redOn():
+    blink(redPin)
+
+def greenOn():
+    blink(greenPin)
+
+def whiteOn():
+    blink(redPin)
+    blink(greenPin)
+    blink(bluePin)
+
+def redOff():
+    turnOff(redPin)
+
+def greenOff():
+    turnOff(greenPin)
+
+def whiteOff():
+    turnOff(redPin)
+    turnOff(greenPin)
+    turnOff(bluePin)
 
 def mongoInsert(
     action,
