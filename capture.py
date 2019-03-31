@@ -93,37 +93,87 @@ def mongoInsert(
         "Subject": subject,
         "Message": message,
     }
-
+    print(str(post))
+    print(place)
+    print(subject)
     if place is "Squires":
         if subject is "Rooms":
             post_ID = squiresRooms.insert_one(post).inserted_id
             documentInserted = squiresRooms.find_one({"_id": post_ID})
+            print("I got to squires rooms")
+            print(post_ID)
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
         elif subject is "Food":
             post_ID = squiresFood.insert_one(post).inserted_id
             documentInserted = squiresFood.find_one({"_id": post_ID})
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
         elif subject is "Meetings":
             post_ID = squiresMeetings.insert_one(post).inserted_id
             documentInserted = squiresMeetings.find_one({"_id": post_ID})
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
     elif place is "Library":
         if subject is "Noise":
             post_ID = libraryNoise.insert_one(post).inserted_id
             documentInserted = libraryNoise.find_one({"_id": post_ID})
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
         elif subject is "Seating":
             post_ID = librarySeating.insert_one.inserted_id
             documentInserted = librarySeating.find_one({"_id": post_ID})
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
         elif subject is "Wishes":
             post_ID = libraryWishes.insert_one(post).inserted_id
             documentInserted = libraryWishes.find_one({"_id": post_ID})
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
     elif place is "Goodwin":
         if subject is "Classrooms":
             post_ID = goodwinClassrooms.insert_one(post).inserted_id
             documentInserted = goodwinClassrooms.find_one({"_id": post_ID})
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
         elif subject is "Auditorium":
             post_ID = goodwinAuditorium.insert_one(post).inserted_id
             documentInserted = goodwinAuditorium.find_one({"_id": post_ID})
-    print("[ Checkpoint 02 " + str(datetime.datetime.now()) +  " ] Store command in MongoDB instance: " + str(documentInserted))
+            print(
+                "[ Checkpoint 02 "
+                + str(datetime.datetime.now())
+                + " ] Store command in MongoDB instance: "
+                + str(documentInserted)
+            )
     return
-
 
 
 # Twitter class:
@@ -162,7 +212,6 @@ class listener(tweepy.StreamListener):
         self.channel.exchange_declare(exchange="Squires", exchange_type="direct")
         self.channel.exchange_declare(exchange="Goodwin", exchange_type="direct")
         self.channel.exchange_declare(exchange="Library", exchange_type="direct")
-	
 
     def on_data(self, data):
         all_data = json.loads(data)
@@ -183,8 +232,15 @@ class listener(tweepy.StreamListener):
             print(command)
             message = re.findall(r'"([^"]*)"', tweeter)
             message = message[0]
-            print("[ Checkpoint 01 " + str(datetime.datetime.now())  " ] Tweet captured: " + message)
-            self.channel.basic_publish(exchange=location, routing_key=command, body=message)
+            print(
+                "[ Checkpoint 01 "
+                + str(datetime.datetime.now())
+                + " ] Tweet captured: "
+                + message
+            )
+            self.channel.basic_publish(
+                exchange=location, routing_key=command, body=message
+            )
 
         elif tweeter[0] == "c" or tweeter[1] == "c":
             action = "c"
@@ -195,23 +251,28 @@ class listener(tweepy.StreamListener):
                 )
                 command = command[1:]
             else:
-                command = tweeter.split('+', 1)
+                command = tweeter.split("+", 1)
                 command = command[1]
 
             location = substr.substringByChar(tweeter, startChar=":", endChar="+")
             location = location[1:-1]
-            print('c location:')
+            print("c location:")
             print(location)
             command = command.rstrip()
-            print('c command:')
+            print("c command:")
             print(command)
-            print("[ Checkpoint 01 " + str(datetime.datetime.now())  " ] Tweet captured: " + message)
-            x,y,message = self.channel.get_basic(command)
+            print(
+                "[ Checkpoint 01 "
+                + str(datetime.datetime.now())
+                + " ] Tweet captured: "
+                + message
+            )
+            x, y, message = self.channel.get_basic(command)
 
         t1 = threading.Thread(
             target=mongoInsert,
             args=(
-                action ,
+                action,
                 location,
                 command,
                 message,
@@ -226,10 +287,18 @@ class listener(tweepy.StreamListener):
             ),
         )
         t1.start()
-        
+
         print("[ Checkpoint 03 " + str(datetime.datetime.now()) + " ] GPIO LED")
-        print("[ Checkpoint 04" + str(datetime.datetime.now()) + " ] Print out RabbitMQ command sent to the Repository RPi: ")
-        print("[ Checkpoint 05 " + str(datetime.datetime.now()) + " ] Print statements generated by the RabbitMQ instance ")
+        print(
+            "[ Checkpoint 04"
+            + str(datetime.datetime.now())
+            + " ] Print out RabbitMQ command sent to the Repository RPi: "
+        )
+        print(
+            "[ Checkpoint 05 "
+            + str(datetime.datetime.now())
+            + " ] Print statements generated by the RabbitMQ instance "
+        )
         return True
 
     def on_error(self, status):
@@ -255,7 +324,3 @@ twitterStream.filter(track=["#ECE4564T20"])
 # End Twitter Section
 
 # connection.close()
-
-
-
-
