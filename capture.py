@@ -7,13 +7,73 @@ import pymongo
 import threading
 import subprocess
 import datetime
+# imports for twitter
+import tweepy
+import json
+import re
+import substring as substr
+import captureKeys
 
+# Twitter Section
+# Keys for twitter dev api
+ckey = captureKeys.ckey
+csecret = captureKeys.csecret
+atoken = captureKeys.atoken
+asecret = captureKeys.asecret
+# setting up authentication
+auth = tweepy.OAuthHandler(ckey, csecret)
+auth.set_access_token(atoken, asecret)
+print('Connected to Twitter')
 
-# Twitter Class
+#
+# The area of doubt
+#
+twitterStream = tweepy.Stream(auth, listener())
+twitterStream.filter(track=["#ECE4564T20"])
 
+# Twitter class:
+class listener(tweepy.StreamListener):
+    def on_data(self, data):
+        all_data = json.loads(data)
+        tweet = all_data["text"]
+        tweeter = tweet.replace('#ECE4564T20 ', '')
 
+        if tweeter[0] == 'p' or tweeter[1] == 'p':
+            if "#ECE4564T20" in tweeter:
+                tweeter = tweeter.replace('#ECE4564T20', '')
+            location = substr.substringByChar(tweeter, startChar=":", endChar="+")
+            location = location[1:-1]
+            print('location:')
+            print(location)
+            command = substr.substringByChar(tweeter, startChar="+", endChar=u'\u0020')
+            command = command.rstrip()
+            command = command[1:]
+            print('command:')
+            print(command)
+            message = re.findall(r'"([^"]*)"', tweeter)
+            message = message[0]
+            print('message:')
+            print(message)
 
+        elif tweeter[0] == 'c' or tweeter[1] == 'c':
+            if "#ECE4564T20" in tweeter:
+                tweeter = tweeter.replace('#ECE4564T20', '')
+                command = substr.substringByChar(tweeter, startChar="+", endChar=u'\u0020')
+            else:
+                command = substr.substringByChar(tweeter, startChar="+")
 
+            location = substr.substringByChar(tweeter, startChar=":", endChar="+")
+            location = location[1:-1]
+            print(location)
+            command = command.rstrip()
+            command = command[1:]
+            print(command)
+
+        return True
+
+    def on_error(self, status):
+        print(status)
+# End Twitter Section
 
 def fetch_ip():
     return (
