@@ -86,6 +86,7 @@ def mongoInsert(
     msgID = "20" + "$" + str(time.time())
     # subject = "Rooms"
     # message = "I like to be comfortable"
+    documentInserted = ""
     post = {
         "Action": action,
         "Place": place,
@@ -183,7 +184,7 @@ class listener(tweepy.StreamListener):
             print(command)
             message = re.findall(r'"([^"]*)"', tweeter)
             message = message[0]
-            print("[ Checkpoint 01 " + str(datetime.datetime.now())  " ] Tweet captured: " + message)
+            print("[ Checkpoint 01 " + str(datetime.datetime.now()) +  " ] Tweet captured: " + message)
             self.channel.basic_publish(exchange=location, routing_key=command, body=message)
 
         elif tweeter[0] == "c" or tweeter[1] == "c":
@@ -205,7 +206,7 @@ class listener(tweepy.StreamListener):
             command = command.rstrip()
             print('c command:')
             print(command)
-            print("[ Checkpoint 01 " + str(datetime.datetime.now())  " ] Tweet captured: " + message)
+            print("[ Checkpoint 01 " + str(datetime.datetime.now()) +  " ] Tweet captured: " + message)
             x,y,message = self.channel.get_basic(command)
 
         t1 = threading.Thread(
