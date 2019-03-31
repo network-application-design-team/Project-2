@@ -94,10 +94,14 @@ def mongoInsert(
         "Message": message,
     }
     print(str(post))
+    print(place)
+    print(subject)
     if place is "Squires":
         if subject is "Rooms":
             post_ID = squiresRooms.insert_one(post).inserted_id
             documentInserted = squiresRooms.find_one({"_id": post_ID})
+            print("I got to squires rooms")
+            print(post_ID)
             print(
                 "[ Checkpoint 02 "
                 + str(datetime.datetime.now())
