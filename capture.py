@@ -15,16 +15,6 @@ import substring as substr
 import captureKeys
 
 # Twitter Section
-# Keys for twitter dev api
-ckey = captureKeys.ckey
-csecret = captureKeys.csecret
-atoken = captureKeys.atoken
-asecret = captureKeys.asecret
-# setting up authentication
-auth = tweepy.OAuthHandler(ckey, csecret)
-auth.set_access_token(atoken, asecret)
-print('Connected to Twitter')
-
 # Twitter class:
 class listener(tweepy.StreamListener):
     def on_data(self, data):
@@ -67,10 +57,20 @@ class listener(tweepy.StreamListener):
 
     def on_error(self, status):
         print(status)
+#
+# Area of interest
+#
+# Keys for twitter dev api
+ckey = captureKeys.ckey
+csecret = captureKeys.csecret
+atoken = captureKeys.atoken
+asecret = captureKeys.asecret
 
-#
-# The area of doubt
-#
+# setting up authentication
+auth = tweepy.OAuthHandler(ckey, csecret)
+auth.set_access_token(atoken, asecret)
+print('Connected to Twitter')
+
 twitterStream = tweepy.Stream(auth, listener())
 twitterStream.filter(track=["#ECE4564T20"])
 # End Twitter Section
