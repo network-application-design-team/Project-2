@@ -157,26 +157,27 @@ class listener(tweepy.StreamListener):
 
         self.goodwinClassrooms = goodwin.Classrooms
         self.goodwinAuditorium = goodwin.Auditorium
-	node = sys.argv[2]
-	username = "Honaker"
-	password = "buse"
 
-	credentials = pika.PlainCredentials(username, password)
-	connection = pika.BlockingConnection(
-    		pika.ConnectionParameters(node, 5672, "/", credentials)
-	)
-	channel = connection.channel()
+        node = sys.argv[2]
+        username = "Honaker"
+        password = "buse"
 
-	channel.exchange_declare(exchange="Squires", exchange_type="direct")
-	channel.exchange_declare(exchange="Goodwin", exchange_type="direct")
-	channel.exchange_declare(exchange="Library", exchange_type="direct")
+        credentials = pika.PlainCredentials(username, password)
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(node, 5672, "/", credentials)
+        )
+        channel = connection.channel()
+
+        channel.exchange_declare(exchange="Squires", exchange_type="direct")
+        channel.exchange_declare(exchange="Goodwin", exchange_type="direct")
+        channel.exchange_declare(exchange="Library", exchange_type="direct")
 	
 
     def on_data(self, data):
         all_data = json.loads(data)
         tweet = all_data["text"]
         tweeter = tweet.replace("#ECE4564T20 ", "")
-
+        action = "p"
         if tweeter[0] == "p" or tweeter[1] == "p":
             if "#ECE4564T20" in tweeter:
                 tweeter = tweeter.replace("#ECE4564T20", "")
@@ -196,6 +197,7 @@ class listener(tweepy.StreamListener):
             channel.basic_publish(exchange=location, routing_key=command, body=message)
 
         elif tweeter[0] == "c" or tweeter[1] == "c":
+            action = "c"
             if "#ECE4564T20" in tweeter:
                 tweeter = tweeter.replace("#ECE4564T20", "")
                 command = substr.substringByChar(
@@ -204,12 +206,22 @@ class listener(tweepy.StreamListener):
             else:
                 command = substr.substringByChar(tweeter, startChar="+")
 
+
+            location = substr.substringByChar(tweeter, startChar=":", endChar="+")
+            location = location[1:-1]
+            print(location)
+            command = command.rstrip()
+            command = command[1:]
+            print(command)
+            message = channel.get.basic(command)
+            print(message)
+
         t1 = threading.Thread(
             target=mongoInsert,
             args=(
-                action,
-                place,
-                subject,
+                ,
+                location,
+                command,
                 message,
                 self.squiresRooms,
                 self.squiresFood,
@@ -222,16 +234,6 @@ class listener(tweepy.StreamListener):
             ),
         )
         t1.start()
-
-        location = substr.substringByChar(tweeter, startChar=":", endChar="+")
-        location = location[1:-1]
-        print(location)
-        command = command.rstrip()
-        command = command[1:]
-        print(command)
-        message = channel.get.basic(command)
-        print(message)
-
         return True
 
     def on_error(self, status):
@@ -255,29 +257,6 @@ print("Connected to Twitter")
 twitterStream = tweepy.Stream(auth, listener())
 twitterStream.filter(track=["#ECE4564T20"])
 # End Twitter Section
-
-
-def fetch_ip():
-    return (
-        (
-            [
-                ip
-                for ip in socket.gethostbyname_ex(socket.gethostname())[2]
-                if not ip.startswith("127.")
-            ]
-            or [
-                [
-                    (s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close())
-                    for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]
-                ][0][1]
-            ]
-        )
-        + ["no IP found"]
-    )[0]
-
-
-
-
 
 # connection.close()
 
