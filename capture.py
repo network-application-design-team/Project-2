@@ -8,6 +8,7 @@ import threading
 import subprocess
 import datetime
 
+
 # Imports for twitter
 import tweepy
 import json
@@ -93,11 +94,9 @@ def mongoInsert(
         "Subject": subject,
         "Message": message,
     }
-    print(str(post))
-    print(place)
-    print(subject)
-    if place is "Squires":
-        if subject is "Rooms":
+    
+    if str(place) == "Squires":
+        if str(subject) == "Rooms":
             post_ID = squiresRooms.insert_one(post).inserted_id
             documentInserted = squiresRooms.find_one({"_id": post_ID})
             print("I got to squires rooms")
@@ -108,7 +107,7 @@ def mongoInsert(
                 + " ] Store command in MongoDB instance: "
                 + str(documentInserted)
             )
-        elif subject is "Food":
+        elif subject == "Food":
             post_ID = squiresFood.insert_one(post).inserted_id
             documentInserted = squiresFood.find_one({"_id": post_ID})
             print(
@@ -117,7 +116,7 @@ def mongoInsert(
                 + " ] Store command in MongoDB instance: "
                 + str(documentInserted)
             )
-        elif subject is "Meetings":
+        elif subject == "Meetings":
             post_ID = squiresMeetings.insert_one(post).inserted_id
             documentInserted = squiresMeetings.find_one({"_id": post_ID})
             print(
@@ -126,8 +125,8 @@ def mongoInsert(
                 + " ] Store command in MongoDB instance: "
                 + str(documentInserted)
             )
-    elif place is "Library":
-        if subject is "Noise":
+    elif place == "Library":
+        if subject == "Noise":
             post_ID = libraryNoise.insert_one(post).inserted_id
             documentInserted = libraryNoise.find_one({"_id": post_ID})
             print(
@@ -136,7 +135,7 @@ def mongoInsert(
                 + " ] Store command in MongoDB instance: "
                 + str(documentInserted)
             )
-        elif subject is "Seating":
+        elif subject == "Seating":
             post_ID = librarySeating.insert_one.inserted_id
             documentInserted = librarySeating.find_one({"_id": post_ID})
             print(
@@ -145,7 +144,7 @@ def mongoInsert(
                 + " ] Store command in MongoDB instance: "
                 + str(documentInserted)
             )
-        elif subject is "Wishes":
+        elif subject == "Wishes":
             post_ID = libraryWishes.insert_one(post).inserted_id
             documentInserted = libraryWishes.find_one({"_id": post_ID})
             print(
@@ -154,8 +153,8 @@ def mongoInsert(
                 + " ] Store command in MongoDB instance: "
                 + str(documentInserted)
             )
-    elif place is "Goodwin":
-        if subject is "Classrooms":
+    elif place == "Goodwin":
+        if subject == "Classrooms":
             post_ID = goodwinClassrooms.insert_one(post).inserted_id
             documentInserted = goodwinClassrooms.find_one({"_id": post_ID})
             print(
@@ -164,7 +163,7 @@ def mongoInsert(
                 + " ] Store command in MongoDB instance: "
                 + str(documentInserted)
             )
-        elif subject is "Auditorium":
+        elif subject == "Auditorium":
             post_ID = goodwinAuditorium.insert_one(post).inserted_id
             documentInserted = goodwinAuditorium.find_one({"_id": post_ID})
             print(
