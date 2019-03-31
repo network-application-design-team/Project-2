@@ -20,41 +20,51 @@ import threading
 # Make sure to use GPIO.cleanup()
 # Commands: redOn(), redOff(), time.sleep(2)
 import RPi.GPIO as GPIO
+
 redPin = 11
 greenPin = 13
 bluePin = 15
+
 
 def blink(pin):
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.HIGH)
 
+
 def turnOff(pin):
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.LOW)
 
+
 def redOn():
     blink(redPin)
 
+
 def greenOn():
     blink(greenPin)
+
 
 def whiteOn():
     blink(redPin)
     blink(greenPin)
     blink(bluePin)
 
+
 def redOff():
     turnOff(redPin)
 
+
 def greenOff():
     turnOff(greenPin)
+
 
 def whiteOff():
     turnOff(redPin)
     turnOff(greenPin)
     turnOff(bluePin)
+
 
 def mongoInsert(
     action,
@@ -127,6 +137,27 @@ print("Connected to Twitter")
 
 # Twitter class:
 class listener(tweepy.StreamListener):
+    def __init__(self):
+        # Mongodb
+        mongoClient = pymongo.MongoClient()
+
+        # Get the 'warehouses'
+        squires = mongoClient.Squires
+        library = mongoClient.Library
+        goodwin = mongoClient.Goodwin
+
+        # Get the 'collections'
+        self.squiresFood = squires.Food
+        self.squiresRooms = squires.Rooms
+        self.squiresMeetings = squires.Meetings
+
+        self.libraryNoise = library.Noise
+        self.librarySeating = library.Seating
+        self.libraryWishes = library.Wishes
+
+        self.goodwinClassrooms = goodwin.Classrooms
+        self.goodwinAuditorium = goodwin.Auditorium
+
     def on_data(self, data):
         all_data = json.loads(data)
         tweet = all_data["text"]
@@ -159,15 +190,33 @@ class listener(tweepy.StreamListener):
             else:
                 command = substr.substringByChar(tweeter, startChar="+")
 
-            location = substr.substringByChar(tweeter, startChar=":", endChar="+")
-            location = location[1:-1]
-            print(location)
-            command = command.rstrip()
-            command = command[1:]
-            print(command)
-            message = channel.get.basic(command)
-            print(message)
-       
+        t1 = threading.Thread(
+            target=mongoInsert,
+            args=(
+                action,
+                place,
+                subject,
+                message,
+                self.squiresRooms,
+                self.squiresFood,
+                self.squiresMeetings,
+                self.libraryNoise,
+                self.librarySeating,
+                self.libraryWishes,
+                self.goodwinAuditorium,
+                self.goodwinClassrooms,
+            ),
+        )
+        t1.start()
+
+        location = substr.substringByChar(tweeter, startChar=":", endChar="+")
+        location = location[1:-1]
+        print(location)
+        command = command.rstrip()
+        command = command[1:]
+        print(command)
+        message = channel.get.basic(command)
+        print(message)
 
         return True
 
@@ -239,70 +288,6 @@ channel.queue_bind(exchange="Commands", queue="SendtoCapt", routing_key="SendtoC
 
 
 # connection.close()
-
-# Mongodb
-mongoClient = pymongo.MongoClient()
-
-# Get the 'warehouses'
-squires = mongoClient.Squires
-library = mongoClient.Library
-goodwin = mongoClient.Goodwin
-
-# Get the 'collections'
-squiresFood = squires.Food
-squiresRooms = squires.Rooms
-squiresMeetings = squires.Meetings
-
-libraryNoise = library.Noise
-librarySeating = library.Seating
-libraryWishes = library.Wishes
-
-goodwinClassrooms = goodwin.Classrooms
-goodwinAuditorium = goodwin.Auditorium
-
-
-# Test Data
-action = "p"
-place = "Squires"
-msgID = "20" + "$" + str(time.time())
-subject = "Rooms"
-message = "I like to be comfortable"
-post = {
-    "Action": action,
-    "Place": place,
-    "MsgID": msgID,
-    "Subject": subject,
-    "Message": message,
-}
-
-
-if place is "Squires":
-    if subject is "Rooms":
-        post_ID = squiresRooms.insert_one(post).inserted_id
-        documentInserted = squiresRooms.find_one({"_id": post_ID})
-    elif subject is "Food":
-        post_ID = squiresFood.insert_one(post).inserted_id
-        documentInserted = squiresFood.find_one({"_id": post_ID})
-    elif subject is "Meetings":
-        post_ID = squiresMeetings.insert_one(post).inserted_id
-        documentInserted = squiresMeetings.find_one({"_id": post_ID})
-elif place is "Library":
-    if subject is "Noise":
-        post_ID = libraryNoise.insert_one(post).inserted_id
-        documentInserted = libraryNoise.find_one({"_id": post_ID})
-    elif subject is "Seating":
-        post_ID = librarySeating.insert_one.inserted_id
-        documentInserted = librarySeating.find_one({"_id": post_ID})
-    elif subject is "Wishes":
-        post_ID = libraryWishes.insert_one(post).inserted_id
-        documentInserted = libraryWishes.find_one({"_id": post_ID})
-elif place is "Goodwin":
-    if subject is "Classrooms":
-        post_ID = goodwinClassrooms.insert_one(post).inserted_id
-        documentInserted = goodwinClassrooms.find_one({"_id": post_ID})
-    elif subject is "Auditorium":
-        post_ID = goodwinAuditorium.insert_one(post).inserted_id
-        documentInserted = goodwinAuditorium.find_one({"_id": post_ID})
 
 Checkpoint = 1
 print(
