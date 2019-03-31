@@ -69,13 +69,13 @@ def callback(ch, method, properties, body):
     print("[" + str(datetime.datetime.now())  + "] [Checkpoint " + str(checkpoint).zfill(2) + "]")
     checkpoint += 1
 
-def respond_back(ch, method, props, body):
-    response = "GPIO message"
 
-    ch.basic_publish(exchange='Commands',
-		     routing_key='SendtoCapt',
-                     body=str(response))
+response = "GPIO message"
 
+channel.basic_publish(exchange='Commands',
+                 routing_key='SendtoCapt',
+                 body=str(response))
+   
 
 channel.basic_consume(callback, queue='Food', no_ack=True)
 channel.basic_consume(callback, queue='Meetings', no_ack=True)
