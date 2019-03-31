@@ -25,12 +25,6 @@ auth = tweepy.OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
 print('Connected to Twitter')
 
-#
-# The area of doubt
-#
-twitterStream = tweepy.Stream(auth, listener())
-twitterStream.filter(track=["#ECE4564T20"])
-
 # Twitter class:
 class listener(tweepy.StreamListener):
     def on_data(self, data):
@@ -73,6 +67,12 @@ class listener(tweepy.StreamListener):
 
     def on_error(self, status):
         print(status)
+
+#
+# The area of doubt
+#
+twitterStream = tweepy.Stream(auth, listener())
+twitterStream.filter(track=["#ECE4564T20"])
 # End Twitter Section
 
 def fetch_ip():
