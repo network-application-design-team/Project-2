@@ -23,6 +23,9 @@ import threading
 # Commands: redOn(), redOff(), time.sleep(2)
 import RPi.GPIO as GPIO
 
+
+hash = sys.argv[4]
+
 redPin = 11
 greenPin = 13
 bluePin = 15
@@ -311,7 +314,7 @@ auth.set_access_token(atoken, asecret)
 #print("Connected to Twitter")
 try:
     twitterStream = tweepy.Stream(auth, listener())
-    twitterStream.filter(track=["#ECE4564T20"])
+    twitterStream.filter(track=[hash])
     # End Twitter Section
 except KeyboardInterrupt:
     whiteOff()
