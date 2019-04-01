@@ -99,7 +99,7 @@ def mongoInsert(
             post_ID = libraryNoise.insert_one(post).inserted_id
             documentInserted = libraryNoise.find_one({"_id": post_ID})
         elif post["Subject"] == "Seating":
-            post_ID = librarySeating.insert_one.inserted_id
+            post_ID = librarySeating.insert_one(post).inserted_id
             documentInserted = librarySeating.find_one({"_id": post_ID})
         elif post["Subject"] == "Wishes":
             post_ID = libraryWishes.insert_one(post).inserted_id
@@ -159,12 +159,13 @@ class listener(tweepy.StreamListener):
     def on_data(self, data):
         all_data = json.loads(data)
         tweet = all_data["text"]
-        tweeter = tweet.replace("#ECE4564T20 ", "")
+        hashSpace = hash + " "
+        tweeter = tweet.replace(hashSpace, "")
         action = "p"
         message = ""
         if tweeter[0] == "p" or tweeter[1] == "p":
-            if "#ECE4564T20" in tweeter:
-                tweeter = tweeter.replace("#ECE4564T20", "")
+            if hash in tweeter:
+                tweeter = tweeter.replace(hash, "")
             location = substr.substringByChar(tweeter, startChar=":", endChar="+")
             location = location[1:-1]
  #           print("location:")
@@ -186,8 +187,8 @@ class listener(tweepy.StreamListener):
 
         elif tweeter[0] == "c" or tweeter[1] == "c":
             action = "c"
-            if "#ECE4564T20" in tweeter:
-                tweeter = tweeter.replace("#ECE4564T20", "")
+            if hash in tweeter:
+                tweeter = tweeter.replace(hash, "")
                 command = substr.substringByChar(
                     tweeter, startChar="+", endChar=u"\u0020"
                 )
