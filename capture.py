@@ -23,6 +23,7 @@ import threading
 # Commands: redOn(), redOff(), time.sleep(2)
 import RPi.GPIO as GPIO
 
+GPIO.setwarnings(False) 
 
 hash = sys.argv[4]
 
